@@ -494,10 +494,10 @@ build_ubuntu_cpu_ngraph() {
         -j$(nproc)
     cp lib/libmkldnn.so.0.* lib/libmkldnn.so.0.tmp
     mv lib/libmkldnn.so.0.tmp lib/libmkldnn.so.0
-    cp lib/libcpu_backend.so.0.8.0* lib/libcpu_backend.so.0.8.tmp
-    mv lib/libcpu_backend.so.0.8.tmp lib/libcpu_backend.so.0.8
-    cp lib/libngraph.so.0.8.0* lib/libngraph.so.0.8.tmp
-    mv lib/libngraph.so.0.8.tmp lib/libngraph.so.0.8
+    cp lib/libcpu_backend.so.0.9.0* lib/libcpu_backend.so.0.9.tmp
+    mv lib/libcpu_backend.so.0.9.tmp lib/libcpu_backend.so.0.9
+    cp lib/libngraph.so.0.9.0* lib/libngraph.so.0.9.tmp
+    mv lib/libngraph.so.0.9.tmp lib/libngraph.so.0.9
 }
 
 build_ubuntu_gpu() {
@@ -759,7 +759,7 @@ unittest_ubuntu_cpu_ngraph() {
     export PYTHONPATH=./python/
     export MXNET_STORAGE_FALLBACK_LOG_VERBOSE=0
     export LD_LIBRARY_PATH=/work/mxnet/lib:$LD_LIBRARY_PATH
-    nosetests-3.4 $NOSE_COVERAGE_ARGUMENTS --with-xunit --xunit-file nosetests_unittest.xml --verbose tests/python/unittest -e "test_subgraph_exe" -e "test_make_subgraph" -e "test_monitor" -e "test_op_output_names_monitor"
+    nosetests-3.4 $NOSE_COVERAGE_ARGUMENTS --with-xunit --xunit-file nosetests_unittest.xml --verbose tests/python/unittest -e "test_subgraph_exe" -e "test_make_subgraph" -e "test_monitor" -e "test_op_output_names_monitor" -e "test_zero_prop"
     nosetests-3.4 $NOSE_COVERAGE_ARGUMENTS --with-xunit --xunit-file nosetests_ngraph.xml --verbose tests/python/ngraph
 }
 
