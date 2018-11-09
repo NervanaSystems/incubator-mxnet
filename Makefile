@@ -70,6 +70,8 @@ ifeq ($(USE_MKLDNN), 1)
 	MKLDNNROOT = $(ROOTDIR)/3rdparty/mkldnn/build/install
 	MKLROOT = $(ROOTDIR)/3rdparty/mkldnn/build/install
 	export USE_MKLML = 1
+	MKLDNN_INCLUDE_DIR = $(MKLDNNROOT)/include
+	MKLDNN_LIB_DIR = $(MKLDNNROOT)/lib
 endif
 
 include $(TPARTYDIR)/mshadow/make/mshadow.mk
