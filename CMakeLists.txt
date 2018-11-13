@@ -21,7 +21,7 @@ mxnet_option(USE_LAPACK           "Build with lapack support" ON)
 mxnet_option(USE_NGRAPH           "Build with nGraph support" OFF)
 mxnet_option(USE_MKL_IF_AVAILABLE "Use MKL if found" ON)
 mxnet_option(USE_MKLML_MKL        "Use MKLDNN variant of MKL (if MKL found)" ON IF USE_MKL_IF_AVAILABLE AND (NOT APPLE))
-mxnet_option(USE_MKLDNN           "Use MKLDNN variant of MKL (if MKL found)" ON IF USE_MKL_IF_AVAILABLE AND (NOT APPLE) AND (NOT USE_NGRAPH))
+mxnet_option(USE_MKLDNN           "Use MKLDNN variant of MKL (if MKL found)" ON IF USE_MKL_IF_AVAILABLE AND (NOT APPLE))
 mxnet_option(USE_OPERATOR_TUNING  "Enable auto-tuning of operators" ON IF NOT MSVC)
 mxnet_option(USE_GPERFTOOLS       "Build with GPerfTools support (if found)" ON)
 mxnet_option(USE_JEMALLOC         "Build with Jemalloc support"   ON)
@@ -166,6 +166,20 @@ if(USE_NGRAPH AND NOT MSVC)
   if(NOT MSVC)
     set(ARCH_OPT_FLAGS "-mtune=generic")
   endif()
+
+  if (USE_MKLDNN)
+    # This target helps mimic MXnet's gmake-based build system, whose 'mkldnn' target includes
+    # placing a copy of libmkldnn.so into the project root directory.
+    # When we're using only cmake, this target can perhaps go away.
+    add_custom_target(mkldnn_libs_in_build_root
+      COMMAND "${CMAKE_COMMAND}" -E copy
+        "${CMAKE_CURRENT_BINARY_DIR}/3rdparty/mkldnn/src/libmkldnn.so"
+        "${CMAKE_CURRENT_BINARY_DIR}/"
+      DEPENDS mkldnn
+      COMMENT Copying local build of MKLDNN library.
+      )
+  endif()
+
   add_subdirectory(3rdparty/ngraph-mxnet-bridge)
 
   include_directories(3rdparty/ngraph-mxnet-bridge/src)
@@ -254,7 +268,7 @@ if(ENABLE_TESTCOVERAGE)
   if(NOT GCOV_PATH)
     message(FATAL_ERROR "gcov not found! Aborting...")
   endif() # NOT GCOV_PATH
-  
+
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
   set(CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} --coverage")
